@@ -1,7 +1,7 @@
 # NAME: MyCNApps_Shadowrocket_Rule
-# GENERATED: 2026-09-21 02:14:23 UTC
+# GENERATED: 2026-09-21 23:20:13 UTC
 # TYPE: RULE-SET
-# TOTAL: 2591
+# TOTAL: 2593
 # SOURCE: blackmatrix7 Shadowrocket
 # AUTO GENERATED - DO NOT EDIT
 
@@ -862,6 +862,7 @@ DOMAIN-SUFFIX,cmbwinglungbank.com
 DOMAIN-SUFFIX,cmccb2b.com
 DOMAIN-SUFFIX,cmdcl.cn
 DOMAIN-SUFFIX,cmdcxls.com
+DOMAIN-SUFFIX,cmecloud.cn
 DOMAIN-SUFFIX,cmf.biz
 DOMAIN-SUFFIX,cmf.ltd
 DOMAIN-SUFFIX,cmfchina.com
@@ -1028,6 +1029,7 @@ DOMAIN-SUFFIX,ecombdapi.com
 DOMAIN-SUFFIX,ecombdimg.com
 DOMAIN-SUFFIX,ecombdstatic.com
 DOMAIN-SUFFIX,ecombdvod.com
+DOMAIN-SUFFIX,ecpan.cn
 DOMAIN-SUFFIX,eczuafam.com
 DOMAIN-SUFFIX,egpctiz.com
 DOMAIN-SUFFIX,egqkxzd.com
