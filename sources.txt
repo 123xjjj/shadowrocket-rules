@@ -30,10 +30,37 @@ BiliBili
 XiaoHongShu
 KuaiShou
 
-# 银行
+# ===== 银行 =====
+
+# 中国农业银行
+ABC
+
+# 中国银行
 BOC
+
+# 交通银行
+BOCOM
+
+# 中国建设银行
 CCB
+
+# 中国光大银行
+CEB
+
+# 广发银行
+CGB
+
+# 招商银行 / 掌上生活
 CMB
+
+# 中国工商银行
+ICBC
+
+# 中国邮政储蓄银行
+PSBC
+
+# 平安银行 / 平安相关
+PingAn
 
 # 运营商
 ChinaMobile
