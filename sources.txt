@@ -1,0 +1,59 @@
+# 局域网
+Lan
+
+# 阿里系：淘宝 / 千问 / 阿里云盘等
+Alibaba
+AliPay
+CaiNiao
+XianYu
+Eleme
+GaoDe
+
+# 电商 / 本地生活
+Pinduoduo
+JingDong
+MeiTuan
+ZhuanZhuan
+
+# 腾讯
+Tencent
+WeChat
+
+# 字节
+ByteDance
+DouYin
+
+# 社交 / 内容
+Zhihu
+Weibo
+BiliBili
+XiaoHongShu
+KuaiShou
+
+# 银行
+BOC
+CCB
+CMB
+
+# 运营商
+ChinaMobile
+ChinaUnicom
+
+# 百度 / 百度网盘
+Baidu
+
+# 政务
+GovCN
+
+# 出行
+12306
+DiDi
+XieCheng
+TongCheng
+
+# 音视频
+Youku
+Himalaya
+
+# 网易 / 网易邮箱大师
+NetEase
