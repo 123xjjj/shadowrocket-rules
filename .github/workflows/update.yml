@@ -1,0 +1,219 @@
+name: Update Shadowrocket CN Apps
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # UTC 20:17 = 北京时间次日约 04:17
+    - cron: "17 20 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Build Shadowrocket rules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket"
+
+          mkdir -p tmp
+          : > tmp/rules.raw
+          : > tmp/domains.raw
+
+          while IFS= read -r name || [ -n "$name" ]; do
+
+            name="${name//$'\r'/}"
+
+            # 跳过空行和注释
+            if [[ -z "$name" || "$name" =~ ^[[:space:]]*# ]]; then
+              continue
+            fi
+
+            echo "========================================"
+            echo "Processing: $name"
+
+            # ----------------------------
+            # 1. 下载 XXX.list
+            # ----------------------------
+
+            rule_url="$BASE/$name/$name.list"
+            rule_file="tmp/${name}.list"
+
+            echo "Downloading RULE-SET:"
+            echo "$rule_url"
+
+            code="$(
+              curl -sS -L \
+                --retry 3 \
+                --connect-timeout 15 \
+                -o "$rule_file" \
+                -w '%{http_code}' \
+                "$rule_url" || true
+            )"
+
+            if [[ "$code" != "200" ]]; then
+              echo "ERROR: $name.list download failed. HTTP $code"
+              echo "$rule_url"
+              exit 1
+            fi
+
+            if grep -qiE '<!DOCTYPE[[:space:]]+html|<html' "$rule_file"; then
+              echo "ERROR: $rule_url returned HTML"
+              exit 1
+            fi
+
+            sed 's/\r$//' "$rule_file" \
+              | grep -vE '^[[:space:]]*#' \
+              | grep -vE '^[[:space:]]*$' \
+              >> tmp/rules.raw
+
+
+            # ----------------------------
+            # 2. 自动检查 XXX_Domain.list
+            # ----------------------------
+
+            domain_url="$BASE/$name/${name}_Domain.list"
+            domain_file="tmp/${name}_Domain.list"
+
+            echo "Checking DOMAIN-SET:"
+            echo "$domain_url"
+
+            code="$(
+              curl -sS -L \
+                --retry 3 \
+                --connect-timeout 15 \
+                -o "$domain_file" \
+                -w '%{http_code}' \
+                "$domain_url" || true
+            )"
+
+            if [[ "$code" == "200" ]]; then
+
+              if grep -qiE '<!DOCTYPE[[:space:]]+html|<html' "$domain_file"; then
+                echo "ERROR: $domain_url returned HTML"
+                exit 1
+              fi
+
+              echo "DOMAIN-SET found: $name"
+
+              sed 's/\r$//' "$domain_file" \
+                | grep -vE '^[[:space:]]*#' \
+                | grep -vE '^[[:space:]]*$' \
+                >> tmp/domains.raw
+
+            elif [[ "$code" == "404" ]]; then
+
+              echo "No DOMAIN-SET, skip: $name"
+
+            else
+
+              echo "ERROR: DOMAIN-SET HTTP $code"
+              echo "$domain_url"
+              exit 1
+
+            fi
+
+          done < sources.txt
+
+
+          # ----------------------------
+          # 3. 加入自己的补充规则
+          # ----------------------------
+
+          if [[ -f manual_rule.list ]]; then
+
+            sed 's/\r$//' manual_rule.list \
+              | grep -vE '^[[:space:]]*#' \
+              | grep -vE '^[[:space:]]*$' \
+              >> tmp/rules.raw
+
+          fi
+
+
+          # ----------------------------
+          # 4. 全局去重
+          # ----------------------------
+
+          LC_ALL=C sort -u tmp/rules.raw > tmp/rules.clean
+          LC_ALL=C sort -u tmp/domains.raw > tmp/domains.clean
+
+          RULE_TOTAL="$(wc -l < tmp/rules.clean | tr -d ' ')"
+          DOMAIN_TOTAL="$(wc -l < tmp/domains.clean | tr -d ' ')"
+
+
+          # ----------------------------
+          # 5. 生成 RULE-SET 总文件
+          # ----------------------------
+
+          {
+            echo "# NAME: MyCNApps_Shadowrocket_Rule"
+            echo "# GENERATED: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "# TYPE: RULE-SET"
+            echo "# TOTAL: $RULE_TOTAL"
+            echo "# SOURCE: blackmatrix7 Shadowrocket"
+            echo "# AUTO GENERATED - DO NOT EDIT"
+            echo
+            cat tmp/rules.clean
+          } > MyCNApps_Shadowrocket_Rule.list
+
+
+          # ----------------------------
+          # 6. 生成 DOMAIN-SET 总文件
+          # ----------------------------
+
+          {
+            echo "# NAME: MyCNApps_Shadowrocket_Domain"
+            echo "# GENERATED: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "# TYPE: DOMAIN-SET"
+            echo "# TOTAL: $DOMAIN_TOTAL"
+            echo "# SOURCE: blackmatrix7 Shadowrocket"
+            echo "# AUTO GENERATED - DO NOT EDIT"
+            echo
+            cat tmp/domains.clean
+          } > MyCNApps_Shadowrocket_Domain.list
+
+
+          # ----------------------------
+          # 7. 淘宝完整性保险
+          # ----------------------------
+
+          if ! grep -Fiq "taobao.com" MyCNApps_Shadowrocket_Rule.list \
+             && ! grep -Fiq "taobao.com" MyCNApps_Shadowrocket_Domain.list; then
+
+            echo "ERROR: taobao.com was not found!"
+            echo "Alibaba source appears incomplete."
+            exit 1
+
+          fi
+
+          echo
+          echo "Build successful."
+          echo "RULE-SET total: $RULE_TOTAL"
+          echo "DOMAIN-SET total: $DOMAIN_TOTAL"
+
+
+      - name: Commit generated rules
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            MyCNApps_Shadowrocket_Rule.list \
+            MyCNApps_Shadowrocket_Domain.list
+
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update Shadowrocket rules"
+            git push
+          fi
