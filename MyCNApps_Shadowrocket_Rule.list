@@ -1,7 +1,7 @@
 # NAME: MyCNApps_Shadowrocket_Rule
-# GENERATED: 2026-10-02 23:49:58 UTC
+# GENERATED: 2026-10-03 23:07:10 UTC
 # TYPE: RULE-SET
-# TOTAL: 2593
+# TOTAL: 2594
 # SOURCE: blackmatrix7 Shadowrocket
 # AUTO GENERATED - DO NOT EDIT
 
@@ -682,6 +682,7 @@ DOMAIN-SUFFIX,bytefcdnrd.com
 DOMAIN-SUFFIX,bytegecko.com
 DOMAIN-SUFFIX,bytegoofy.com
 DOMAIN-SUFFIX,bytegslb.com
+DOMAIN-SUFFIX,bytehwm.com
 DOMAIN-SUFFIX,byteimg.com
 DOMAIN-SUFFIX,bytelb.net
 DOMAIN-SUFFIX,bytelove.cn
