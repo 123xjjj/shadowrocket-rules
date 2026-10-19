@@ -1,7 +1,7 @@
 # NAME: MyCNApps_Shadowrocket_Rule
-# GENERATED: 2026-10-18 22:27:27 UTC
+# GENERATED: 2026-10-19 23:45:24 UTC
 # TYPE: RULE-SET
-# TOTAL: 2594
+# TOTAL: 2596
 # SOURCE: blackmatrix7 Shadowrocket
 # AUTO GENERATED - DO NOT EDIT
 
@@ -61,6 +61,8 @@ DOMAIN,dldir1.qq.com
 DOMAIN,instant.arubanetworks.com
 DOMAIN,lf3-static.bytednsdoc.com
 DOMAIN,local.adguard.org
+DOMAIN,localhost.weixin.qq.com
+DOMAIN,localhost.work.weixin.qq.com
 DOMAIN,netease.ugcvideoss.ourdvs.com
 DOMAIN,oasisauth.h3c.com
 DOMAIN,p-bstarstatic.akamaized.net
